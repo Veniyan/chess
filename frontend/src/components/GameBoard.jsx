@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { ChessBuilder } from 'chess.js';
 import { Chess } from 'chess.js';
 import { Chessboard } from 'react-chessboard';
 import api from '../api/axiosConfig';
