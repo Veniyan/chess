@@ -22,10 +22,13 @@ const Lobby = () => {
 
     const createGame = async () => {
         try {
+            console.log('Creating game...');
             const response = await api.post('/games/create');
+            console.log('Game created:', response.data);
             navigate(`/game/${response.data.id}`);
         } catch (error) {
             console.error('Error creating game:', error);
+            alert(`Failed to create game: ${error.response?.data?.error || error.message}`);
         }
     };
 

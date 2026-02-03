@@ -5,6 +5,7 @@ import com.chess.onlinechess.model.User;
 import com.chess.onlinechess.service.GameService;
 import com.chess.onlinechess.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -30,10 +31,11 @@ public class GameController {
     // Join endpoint removed/deprecated
 
     @PostMapping("/{id}/move")
-    public Game makeMove(@PathVariable Long id, @RequestBody Map<String, String> payload, Principal principal) {
+    public ResponseEntity<Game> makeMove(@PathVariable Long id, @RequestBody Map<String, String> payload,
+            Principal principal) {
         User user = userService.findByUsername(principal.getName()).orElseThrow();
         String fen = payload.get("fen");
-        return gameService.makeMove(id, user, fen);
+        return ResponseEntity.ok(gameService.makeMove(id, user, fen));
     }
 
     @GetMapping

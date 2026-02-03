@@ -14,7 +14,9 @@ const Register = () => {
             alert('Registration successful! Please login.');
             navigate('/login');
         } catch (error) {
-            alert('Registration failed: ' + (error.response?.data || error.message));
+            console.error("Registration Error:", error);
+            const errorMessage = error.response?.data?.error || error.message || "Unknown error";
+            alert('Registration failed: ' + errorMessage + '\n(Check Console for details)');
         }
     };
 

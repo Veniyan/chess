@@ -43,21 +43,28 @@ const GameBoard = () => {
         };
 
         try {
-            const tempGame = new Chess(game.fen());
-            const result = tempGame.move(move);
+            // Create a completely new instance for state immutability
+            const gameCopy = new Chess(game.fen());
 
-            if (!result) return false; // Illegal move
+            try {
+                const result = gameCopy.move(move);
+                if (!result) {
+                    console.log("Invalid move according to chess.js:", move, gameCopy.ascii());
+                    return false;
+                }
 
-            // Update local state immediately for responsiveness
-            setGame(tempGame);
-            setFen(tempGame.fen());
+                // Update local state
+                setGame(gameCopy);
 
-            // Sync with server for validation/persistence
-            api.post(`/games/${id}/move`, { fen: tempGame.fen() })
-                .catch(err => {
-                    console.error("Move failed on server", err);
-                    // Could revert here if needed
-                });
+                // Send to server
+                api.post(`/games/${id}/move`, { fen: gameCopy.fen() })
+                    .catch(err => console.error("Move sync failed:", err));
+
+                return true;
+            } catch (error) {
+                console.error("Move exception:", error);
+                return false;
+            }
 
             return true;
         } catch (e) {
@@ -71,7 +78,7 @@ const GameBoard = () => {
             <p>Status: {status}</p>
             <p>Turn: {game.turn() === 'w' ? "White" : "Black"}</p>
             <div className="board-wrapper">
-                <Chessboard position={fen} onPieceDrop={onDrop} />
+                <Chessboard position={game.fen()} onPieceDrop={onDrop} />
             </div>
         </div>
     );
